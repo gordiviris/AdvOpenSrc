@@ -1,16 +1,24 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const exphbs = require("express-handlebars");
 const path = require("path");
 const { error } = require("console");
 
 const app = express();
 const PORT = 3000;
 
+//set handlebars as our templating engine
+app.engine("handlebars", exphbs.engine());
+app.set("view engine", "handlebars");
+app.set("views", "./views");
+
+//sets our static resources folder
 app.use(express.static(path.join(__dirname,"public")));
 
 //Middleware body-parser parses json requests
 app.use(bodyParser.json());
+app.use(express.urlencoded({extended:true}));
 
 //MongoDB Database connection
 const mongoURI = "mongodb://localhost:27017/gamelibrary"
@@ -108,6 +116,21 @@ function tellTheMessage(){
 }
 
 //tellTheMessage();
+
+//Handlebars examples
+app.get("/hbsindex", (req, res)=>{
+    res.render("home",{
+        title: "Welcome to handlebars site",
+        message:"This is our page using the template engine"
+    })
+});
+
+app.get("/addgame", (req, res)=>{
+    res.render("addgame",{
+        title: "Add a game to the Favorite Game Database",
+        message:"Please add a game."
+    })
+});
 
 //this is an example of a route
 app.get("/",(req, res)=>{
